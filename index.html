@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tỏ Tình 💖</title>
+    <title>secret</title>
     <style>
         body {
             text-align: center;
@@ -29,44 +29,67 @@
         }
         .yes { background-color: green; color: white; }
         .no { background-color: red; color: white; }
+        .hihi {
+            font-size: 0px;
+            opacity: 0;
+            transition: all 0.5s ease-in-out;
+        }
+        .hihi.show {
+            font-size: 50px;
+            opacity: 1;
+            animation: shakeRotate 1s infinite;
+        }
+        @keyframes shakeRotate {
+            0%, 100% { transform: rotate(0deg) translateX(0px); }
+            25% { transform: rotate(10deg) translateX(5px); }
+            50% { transform: rotate(0deg) translateX(0px); }
+            75% { transform: rotate(-10deg) translateX(-5px); }
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h2 id="question">Tôi hỏi: Em phải trả lời thật lòng nhé! 💖</h2>
+        <h2 id="question">Tui hỏi cậu phải trả lời thật lòng nhé!</h2>
         <div id="options">
             <button class="yes" onclick="nextQuestion('Có')">Có</button>
-            <button class="no" onclick="nextQuestion('Không')">Không</button>
+            <button class="no" onclick="handleFirstNo()">Không</button>
         </div>
     </div>
 
+    <h1 class="hihi" id="hihiText">Hihi </h1>
+
     <script>
         const questions = [
-            "Câu 1: Em phải trả lời thật lòng nhé! 💖",
-            "Câu 2: Em thấy anh như thế nào?",
-            "Câu 3: Em có thích anh không? 😘"
+            "Câu 1: cậu phải trả lời thật lòng nhé :>?",
+            "Câu 2: cậu thấy tui như thế nào?",
+            "Câu 3: cậu có thích tui không? 😘"
         ];
         let answers = [];
         let index = 0;
+        let noCount = 0; // Đếm số lần chọn "Không" ở câu 3
 
         function nextQuestion(answer) {
             answers.push(answer);
+            console.log(`Câu ${index + 1}: ${answer}`); // Log câu trả lời
+
             if (index < questions.length - 1) {
                 index++;
                 document.getElementById("question").innerText = questions[index];
-                if (index === 1) {
+
+                if (index === 1) {  
                     document.getElementById("options").innerHTML = `
-                        <input type="text" id="customAnswer" placeholder="Nhập câu trả lời của em...">
+                        <input type="text" id="customAnswer" placeholder="Nói ra suy nghĩ của cậu đi...">
                         <button class="yes" onclick="submitText()">Gửi</button>
                     `;
                 } else {
                     document.getElementById("options").innerHTML = `
                         <button class="yes" onclick="nextQuestion('Có')">Có</button>
-                        <button class="no" onclick="nextQuestion('Không')">Không</button>
+                        <button class="no" onclick="handleThirdNo()">Không</button>
                     `;
                 }
             } else {
+                showHihi();
                 sendAnswers();
             }
         }
@@ -76,14 +99,33 @@
             nextQuestion(text);
         }
 
+        function handleFirstNo() {
+            console.log("Không"); // Log ra console
+            alert("Tôi coi như đấy là có he >.< ");
+            nextQuestion("Không (Nhưng tui coi là có :>>)");
+        }
+
+        function handleThirdNo() {
+            noCount++;
+            if (noCount >= 3) {
+                document.body.innerHTML = "<h1>cảm ơn bạn đã trả lời câu hỏi của tui he :< </h1>";
+                return;
+            }
+            alert("không được đâu.. trả lời lại nha");
+        }
+
         function sendAnswers() {
-            fetch('/save', {
+            fetch('/answer', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ answers })
             }).then(() => {
-                document.body.innerHTML = "<h1>Cảm ơn em đã trả lời! 😍</h1>";
+                document.body.innerHTML += "<h1>Cảm ơn cậu đã thích tui <3333 ;3 i love u </h1>";
             });
+        }
+
+        function showHihi() {
+            document.getElementById("hihiText").classList.add("show");
         }
     </script>
 
