@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tỏ Tình 💖</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+            background-color: pink;
+            margin-top: 50px;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+            width: 60%;
+            margin: auto;
+        }
+        button {
+            font-size: 18px;
+            margin: 10px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .yes { background-color: green; color: white; }
+        .no { background-color: red; color: white; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2 id="question">Tôi hỏi: Em phải trả lời thật lòng nhé! 💖</h2>
+        <div id="options">
+            <button class="yes" onclick="nextQuestion('Có')">Có</button>
+            <button class="no" onclick="nextQuestion('Không')">Không</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            "Câu 1: Em phải trả lời thật lòng nhé! 💖",
+            "Câu 2: Em thấy anh như thế nào?",
+            "Câu 3: Em có thích anh không? 😘"
+        ];
+        let answers = [];
+        let index = 0;
+
+        function nextQuestion(answer) {
+            answers.push(answer);
+            if (index < questions.length - 1) {
+                index++;
+                document.getElementById("question").innerText = questions[index];
+                if (index === 1) {
+                    document.getElementById("options").innerHTML = `
+                        <input type="text" id="customAnswer" placeholder="Nhập câu trả lời của em...">
+                        <button class="yes" onclick="submitText()">Gửi</button>
+                    `;
+                } else {
+                    document.getElementById("options").innerHTML = `
+                        <button class="yes" onclick="nextQuestion('Có')">Có</button>
+                        <button class="no" onclick="nextQuestion('Không')">Không</button>
+                    `;
+                }
+            } else {
+                sendAnswers();
+            }
+        }
+
+        function submitText() {
+            const text = document.getElementById("customAnswer").value;
+            nextQuestion(text);
+        }
+
+        function sendAnswers() {
+            fetch('/save', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ answers })
+            }).then(() => {
+                document.body.innerHTML = "<h1>Cảm ơn em đã trả lời! 😍</h1>";
+            });
+        }
+    </script>
+
+</body>
+</html>
