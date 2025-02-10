@@ -1,16 +1,28 @@
-const express = require('express');
-const fs = require('fs');
-const cors = require('cors');
+const express = require("express");
+const bodyParser = require("body-parser");
+const path = require("path");
+
 const app = express();
+const port = 3000;
 
-app.use(express.json());
-app.use(cors());
-app.use(express.static(__dirname));
+app.use(bodyParser.json());
 
-app.post('/save', (req, res) => {
-    const data = req.body.answers.join("\n");
-    fs.writeFileSync('answers.txt', data);
-    res.send("Lưu thành công!");
+// 📌 Phục vụ file HTML trong thư mục "public"
+app.use(express.static("public"));
+
+// 📌 Route mặc định để mở file index.html
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-app.listen(3000, () => console.log('Server chạy tại http://localhost:3000'));
+// 📌 API lưu câu trả lời
+app.post("/answer", (req, res) => {
+    const { answers } = req.body;
+    console.log("📩 Câu trả lời nhận được:", answers);
+    res.send("Câu trả lời đã được ghi nhận!");
+});
+
+// 📌 Chạy server
+app.listen(port, () => {
+    console.log(`🚀 Server đang chạy tại http://localhost:${port}`);
+});
